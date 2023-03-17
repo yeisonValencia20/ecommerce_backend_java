@@ -1,22 +1,41 @@
 package com.curso.ecommerce.springecommerce.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "detalles")
 public class DetalleOrden {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
     private double cantidad;
     private double precio;
     private double total;
 
+    @OneToOne
+    private Orden orden;
+
+    @OneToOne
+    private Producto produco;
+
     public DetalleOrden() {
 
     }
 
-    public DetalleOrden(Integer id, String nombre, double cantidad, double precio, double total) {
-        this.id = id; 
-        this.nombre = nombre; 
+    public DetalleOrden(Integer id, String nombre, double cantidad, double precio, double total, Orden orden, Producto producto) {
+        this.id       = id; 
+        this.nombre   = nombre; 
         this.cantidad = cantidad; 
-        this.precio = precio; 
-        this.total = total; 
+        this.precio   = precio; 
+        this.total    = total; 
+        this.orden    = orden;
+        this.produco  = producto;
     }
 
     public double getCantidad() {
@@ -39,6 +58,14 @@ public class DetalleOrden {
         return total;
     }
 
+    public Orden getOrden() {
+        return orden;
+    }
+
+    public Producto getProduco() {
+        return produco;
+    }
+
     public void setCantidad(double cantidad) {
         this.cantidad = cantidad;
     }
@@ -57,5 +84,13 @@ public class DetalleOrden {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public void setOrden(Orden orden) {
+        this.orden = orden;
+    }
+
+    public void setProduco(Producto produco) {
+        this.produco = produco;
     }
 }

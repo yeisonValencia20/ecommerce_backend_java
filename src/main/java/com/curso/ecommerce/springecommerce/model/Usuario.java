@@ -1,6 +1,19 @@
 package com.curso.ecommerce.springecommerce.model;
 
+import java.util.List;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "usuarios")
 public class Usuario {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nombre;
     private String username;
@@ -10,11 +23,17 @@ public class Usuario {
     private String tipo;
     private String password;
 
+    @OneToMany(mappedBy = "usuario")
+    private List<Producto> productos;
+
+    @OneToMany(mappedBy = "usuario")
+    private List<Orden> ordenes;
+
     public Usuario(){
 
     }
 
-    public Usuario(Integer id, String nombre, String username, String email, String direccion, String telefono, String tipo, String password){
+    public Usuario(Integer id, String nombre, String username, String email, String direccion, String telefono, String tipo, String password, List<Producto> productos, List<Orden> ordenes){
         this.id        = id;
         this.nombre    = nombre;
         this.username  = username;
@@ -23,6 +42,8 @@ public class Usuario {
         this.telefono  = telefono;
         this.tipo      = tipo;
         this.password  = password;
+        this.productos = productos;
+        this.ordenes   = ordenes; 
     }
 
     public String getDireccion() {
@@ -57,6 +78,14 @@ public class Usuario {
         return username;
     }
 
+    public List<Producto> getProducto() {
+        return productos;
+    }
+
+    public List<Orden> getOrdenes() {
+        return ordenes;
+    }
+
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     }
@@ -87,6 +116,14 @@ public class Usuario {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setProducto(List<Producto> producto) {
+        this.productos = producto;
+    }
+
+    public void setOrdenes(List<Orden> ordenes) {
+        this.ordenes = ordenes;
     }
 
     @Override
