@@ -1,5 +1,6 @@
 package com.curso.ecommerce.springecommerce.controller;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.slf4j.*;
@@ -10,10 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.curso.ecommerce.springecommerce.model.Producto;
 import com.curso.ecommerce.springecommerce.model.Usuario;
 import com.curso.ecommerce.springecommerce.service.ProductoService;
+import com.curso.ecommerce.springecommerce.service.UploadFileService;
 
 @Controller
 @RequestMapping("/productos")
@@ -23,6 +27,9 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private UploadFileService upload;
 
     @GetMapping("")
     public String show(Model model) {
@@ -46,11 +53,25 @@ public class ProductoController {
         return "productos/edit";
     }
 
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable Integer id) {
+        productoService.delete(id);
+        return "redirect:/productos";
+    }
+
     @PostMapping("/save")
-    public String save(Producto producto) {
+    public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
         LOGGER.info("Este es el objeto producto {}", producto);
         Usuario u = new Usuario(1,"","","","","","","");
         producto.setUsuario(u);
+
+        // Guardar imagen
+        // cuando se crea un producto
+        if (producto.getId() == null) {
+            String fileName = upload.saveImage(file);
+            producto.setImagen(fileName);
+        }
+
         productoService.save(producto);
         return "redirect:/productos";
     }
@@ -61,9 +82,4 @@ public class ProductoController {
         return "redirect:/productos";
     }
 
-    @GetMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id) {
-        productoService.delete(id);
-        return "redirect:/productos";
-    }
 }
