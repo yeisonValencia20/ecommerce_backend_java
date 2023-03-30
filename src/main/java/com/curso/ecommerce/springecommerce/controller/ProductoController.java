@@ -68,7 +68,7 @@ public class ProductoController {
     @PostMapping("/save")
     public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
         LOGGER.info("Este es el objeto producto {}", producto);
-        Usuario u = new Usuario(1,"","","","","","","");
+        Usuario u = new Usuario(1, "", "", "", "", "", "", "");
         producto.setUsuario(u);
 
         // Guardar imagen
@@ -84,19 +84,20 @@ public class ProductoController {
 
     @PostMapping("/update")
     public String update(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
-         if (file.isEmpty()) {
-            Producto prevProducto = productoService.get(producto.getId()).get();
+        Producto prevProducto = productoService.get(producto.getId()).get();
+
+        if (file.isEmpty()) {
             producto.setImagen(prevProducto.getImagen());
-         }
-         else {
-            Producto prevProducto = productoService.get(producto.getId()).get();
-            if (!prevProducto.getImagen().equals("default.jpg")) { 
+        } else {
+            if (!prevProducto.getImagen().equals("default.jpg")) {
                 upload.deleteImage(prevProducto.getImagen());
             }
 
             String fileName = upload.saveImage(file);
             producto.setImagen(fileName);
-         }
+        }
+
+        producto.setUsuario(prevProducto.getUsuario());
         productoService.update(producto);
         return "redirect:/productos";
     }
