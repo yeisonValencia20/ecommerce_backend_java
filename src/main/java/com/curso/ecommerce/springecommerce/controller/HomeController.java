@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.curso.ecommerce.springecommerce.model.Producto;
 import com.curso.ecommerce.springecommerce.service.ProductoService;
 @Controller
 @RequestMapping("/")
@@ -26,8 +27,11 @@ public class HomeController {
     }
 
     @GetMapping("productohome/{id}")
-    public String verProducto(@PathVariable Integer id) {
+    public String verProducto(@PathVariable Integer id, Model model) {
         log.info("id producto enviado como parametro {}", id);
+        Producto producto = productoService.get(id).get();
+
+        model.addAttribute("producto", producto);
         return "usuario/productoHome";
     }
 }
