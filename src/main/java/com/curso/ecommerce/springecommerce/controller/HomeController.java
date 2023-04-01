@@ -63,6 +63,7 @@ public class HomeController {
         detalleOrden.setTotal(producto.getPrecio() * cantidad);
         detalleOrden.setProducto(producto);
 
+        // TODO:validar que mas adelante, si se agregar un producto que ya esta en el carrito de compras, aumentar el numero de la orden
         detalles.add(detalleOrden);
 
         sumaTotal = detalles.stream().mapToDouble(dt->dt.getTotal()).sum();
@@ -92,6 +93,13 @@ public class HomeController {
         model.addAttribute("cart", detalles);
         model.addAttribute("orden", orden);
 
+        return "usuario/carrito";
+    }
+
+    @GetMapping("listCart")
+    public String listCart(Model model) {
+        model.addAttribute("cart", detalles);
+        model.addAttribute("orden", orden);
         return "usuario/carrito";
     }
 }
