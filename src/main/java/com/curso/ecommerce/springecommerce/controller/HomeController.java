@@ -1,6 +1,7 @@
 package com.curso.ecommerce.springecommerce.controller;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -18,6 +19,8 @@ import com.curso.ecommerce.springecommerce.model.DetalleOrden;
 import com.curso.ecommerce.springecommerce.model.Orden;
 import com.curso.ecommerce.springecommerce.model.Producto;
 import com.curso.ecommerce.springecommerce.model.Usuario;
+import com.curso.ecommerce.springecommerce.service.DetalleOrdenService;
+import com.curso.ecommerce.springecommerce.service.OrdenService;
 import com.curso.ecommerce.springecommerce.service.ProductoService;
 import com.curso.ecommerce.springecommerce.service.UsuarioService;
 @Controller
@@ -31,6 +34,12 @@ public class HomeController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private OrdenService ordenService;
+
+    @Autowired
+    private DetalleOrdenService detalleOrdenService;
 
     // para almacenar los detalles de la orden
     private List<DetalleOrden> detalles = new ArrayList<DetalleOrden>();
@@ -117,5 +126,31 @@ public class HomeController {
         model.addAttribute("orden", orden);
         model.addAttribute("usuario", usuario);
         return "usuario/resumenorden";
+    }
+
+    @GetMapping("saveOrder")
+    public String saveOrder() {
+
+        // fecha de creacion de la orden
+        Date fecha = new Date();
+        orden.setFechaCreacion(fecha);
+
+        Usuario usuario = usuarioService.findById(1).get();
+        orden.setUsuario(usuario);
+
+        // generar numero de la orden
+        orden.setNumero(ordenService.generarNumeroOrden());
+
+        ordenService.save(orden);
+
+        for (DetalleOrden dt:detalles) {
+            dt.setOrden(orden);
+            detalleOrdenService.save(dt);
+        }
+
+        orden = new Orden();
+        detalles.clear();
+        
+        return "redirect:/";
     }
 }
