@@ -7,6 +7,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.web.ServerProperties.Reactive.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,8 @@ import com.curso.ecommerce.springecommerce.service.DetalleOrdenService;
 import com.curso.ecommerce.springecommerce.service.OrdenService;
 import com.curso.ecommerce.springecommerce.service.ProductoService;
 import com.curso.ecommerce.springecommerce.service.UsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/")
 public class HomeController {
@@ -48,7 +51,9 @@ public class HomeController {
     private Orden orden = new Orden();
     
     @GetMapping("")
-    public String home(Model model) {
+    public String home(Model model, HttpSession session) {
+        log.info("Id session usuario {}", session.getAttribute("idusuario"));
+
         model.addAttribute("productos", productoService.findAll());
         return "usuario/home";
     }
@@ -118,9 +123,10 @@ public class HomeController {
     }
 
     @GetMapping("order")
-    public String order(Model model) {
+    public String order(Model model, HttpSession session) {
 
-        Usuario usuario = usuarioService.findById(1).get();
+        int idUsuario = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Usuario usuario = usuarioService.findById(idUsuario).get();
 
         model.addAttribute("cart", detalles);
         model.addAttribute("orden", orden);
@@ -129,13 +135,14 @@ public class HomeController {
     }
 
     @GetMapping("saveOrder")
-    public String saveOrder() {
+    public String saveOrder(HttpSession session) {
 
         // fecha de creacion de la orden
         Date fecha = new Date();
         orden.setFechaCreacion(fecha);
 
-        Usuario usuario = usuarioService.findById(1).get();
+        int idUsuario = Integer.parseInt(session.getAttribute("idusuario").toString());
+        Usuario usuario = usuarioService.findById(idUsuario).get();
         orden.setUsuario(usuario);
 
         // generar numero de la orden
@@ -145,6 +152,7 @@ public class HomeController {
 
         for (DetalleOrden dt:detalles) {
             dt.setOrden(orden);
+            log.info("{}", dt);
             detalleOrdenService.save(dt);
         }
 
