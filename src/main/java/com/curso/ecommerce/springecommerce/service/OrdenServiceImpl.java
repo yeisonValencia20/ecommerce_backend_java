@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.curso.ecommerce.springecommerce.model.Orden;
+import com.curso.ecommerce.springecommerce.model.Usuario;
 import com.curso.ecommerce.springecommerce.repository.OrdenRepository;
 
 @Service
@@ -51,5 +52,10 @@ public class OrdenServiceImpl implements OrdenService{
         String zeros = zero.repeat(10 - numeroString.length());
 
         return zeros + numeroString;
+    }
+
+    @Override
+    public List<Orden> findByUsuario(Usuario usuario) {
+        return ordenRepository.findByUsuario(usuario);
     }
 }
